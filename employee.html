@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Zone</title>
+    <link rel="stylesheet" href="estyles.css">
+    <style>
+        :root {
+            --primary-color: rgba(14, 4, 4);
+            --secondary-color: #f4f4f4;
+            --text-color: #333;
+            --accent-color: #ff5722;
+            --holiday-color: #ffeb3b;
+            /* Yellow for holidays */
+            --special-day-color: #8c0096;
+            /* Teal for second and fourth Saturdays */
+            --sunday-color: red;
+            /* Red for Sundays */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgba(14, 4, 4);
+        }
+
+        header {
+            background-color: var(--primary-color);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        header h1 {
+            margin: 0;
+            padding: 5px;
+            font-weight: bold;
+            color: #f4f4f4;
+            /* Text color */
+            text-shadow: 4px 2px 5px #1095ca;
+            /* Offset-x, Offset-y, Blur-radius, Color */
+            font-size: 2rem;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .profile-section,
+        .calendar-section,
+        .leave-request-section {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+            box-shadow: 7px 6px 5px #1095ca;
+        }
+
+        header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 10px;
+            padding: 4px;
+            margin: 10px;
+            box-shadow: 5px 2px 5px #1095ca;
+        }
+
+        .profile-section {
+            order: 1;
+        }
+
+        .calendar-section {
+            order: 2;
+        }
+
+        .leave-request-section {
+            order: 3;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+            margin-top: 10px;
+            /* Add margin-top to create space between buttons and calendar */
+            overflow: auto;
+            /* Prevent overflow on small screens */
+        }
+
+        .calendar div {
+            padding: 10px;
+            background: var(--secondary-color);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .calendar .header {
+            font-weight: bold;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .calendar .today {
+            background: var(--secondary-color);
+            color: var(--accent-color);
+        }
+
+        .calendar .holiday {
+            background: var(--holiday-color);
+        }
+
+        .calendar .saturday {
+            background: var(--saturday-color);
+            color: white;
+        }
+
+        .calendar .special-day {
+            background: var(--secondary-color);
+            color: var(--special-day-color);
+        }
+
+        .calendar .sunday {
+            background: var(--secondary-color);
+            color: var(--sunday-color);
+        }
+
+        #prev-month,
+        #next-month,
+        #mark-attendance,
+        #submit-req {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #month-year {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input,
+        form textarea,
+        form button {
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        form button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #prev-month,
+        #next-month {
+            margin: 0 10px;
+            /* Added margin to the buttons */
+        }
+
+        #holidayModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        #modalContent {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        #modalClose {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+
+        }
+
+        #modalClose:hover,
+        #modalClose:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #logoutButton {
+            margin-top: 10px;
+            color: white;
+            background-color: rgba(14, 4, 4);
+            box-shadow: 5px 3px 5px #1095ca;
+            border: 2px solid #f4f4f4;
+            border-radius: 20%;
+            font-weight: bold;
+            height: 50px;
+            width: 60px;
+            cursor: pointer;
+
+        }
+
+        .card-img-top {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            margin: 0 auto;
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .profile-section,
+            .calendar-section,
+            .leave-request-section {
+                padding: 10px;
+                margin: 5px 0;
+            }
+
+            .calendar {
+                grid-template-columns: repeat(7, 1fr);
+                font-size: 0.8rem;
+                margin-top: 15px;
+                /* Added margin to calendar for better spacing */
+            }
+        }
+
+        @media (max-width: 375px) {
+            .container {
+                padding: 5px;
+            }
+
+            .calendar {
+                font-size: 0.75rem;
+                /* Adjust font size for smaller screens */
+                margin-top: 15px;
+                /* Ensure enough space above the calendar */
+                grid-template-columns: repeat(7, 1fr);
+                /* Ensure 7 columns */
+                overflow-x: auto;
+                /* Allow horizontal scroll if needed */
+            }
+
+            .profile-section,
+            .calendar-section,
+            .leave-request-section {
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 300px) {
+            .container {
+                padding: 3px;
+            }
+
+            .calendar {
+                font-size: 0.7rem;
+                /* Further reduce font size for very small screens */
+                margin-top: 15px;
+                /* Keep the margin consistent */
+                grid-template-columns: repeat(7, 1fr);
+                /* Keep grid column layout */
+            }
+
+            .profile-section,
+            .calendar-section,
+            .leave-request-section {
+                padding: 6px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .profile-section {
+                flex: 1 1 300px;
+            }
+
+            .calendar-section {
+                flex: 1 1 300px;
+                margin-top: 20px;
+            }
+
+            .leave-request-section {
+                flex: 2 1 600px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "profile leave"
+                    "calendar leave";
+                gap: 20px;
+            }
+
+            .profile-section {
+                grid-area: profile;
+            }
+
+            .calendar-section {
+                grid-area: calendar;
+            }
+
+            .leave-request-section {
+                grid-area: leave;
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-img-top {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="vyl.jpeg" alt="Company Logo">
+        <h1>Employee Zone</h1>
+        <button id="logoutButton" style="margin-left: auto;">Logout</button>
+    </header>
+
+    <div class="container">
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <h1 class="text-center">Profile</h1>
+            <div>
+                <div id="userDetails" class="d-flex justify-content-space-around">
+                    <!-- Logged-in user details will be dynamically populated here -->
+                </div>
+            </div>
+
+            <button id="mark-attendance">Mark Attendance</button>
+            <p id="attendance-status"></p>
+        </section>
+
+        <!-- Calendar Section -->
+        <section class="calendar-section">
+            <h2>Calendar</h2>
+            <div>
+                <button id="prev-month">Previous</button>
+                <span id="month-year"></span>
+                <button id="next-month">Next</button>
+            </div>
+            <div id="calendar" class="calendar"></div>
+        </section>
+
+        <!-- Leave Request Section -->
+        <section class="leave-request-section">
+            <h2>Leave Request</h2>
+            <form id="leave-form">
+                <input type="text" id="username" placeholder="Your Name" required>
+                <input type="text" id="designation" placeholder="Your Designation" required>
+                <textarea id="reason" placeholder="Reason for Leave" rows="4" required></textarea>
+                <button id="submit-req" type="submit">Submit Request</button>
+            </form>
+        </section>
+
+        <div id="holidayModal">
+            <div id="modalContent">
+                <span id="modalClose">&times;</span>
+                <h3 id="holidayTitle"></h3>
+                <p id="holidayDescription"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // List of public holidays with descriptions
+        const holidays = [
+            { date: '1-1', description: 'New Year\'s Day' },
+            { date: '12-25', description: 'Christmas Day' },
+        ];
+
+        // Function to check if it is a second or fourth Saturday
+        const isSecondOrFourthSaturday = (date) => {
+            const day = date.getDate();
+            const isSaturday = date.getDay() === 6;
+            return isSaturday && (day >= 8 && day <= 14 || day >= 22 && day <= 28);
+        };
+
+        // Calendar Functionality
+        const calendarElement = document.getElementById('calendar');
+        const monthYearElement = document.getElementById('month-year');
+        const prevMonthButton = document.getElementById('prev-month');
+        const nextMonthButton = document.getElementById('next-month');
+        const holidayModal = document.getElementById('holidayModal');
+        const holidayTitle = document.getElementById('holidayTitle');
+        const holidayDescription = document.getElementById('holidayDescription');
+        const modalClose = document.getElementById('modalClose');
+
+        let currentDate = new Date();
+
+        function renderCalendar(date) {
+            calendarElement.innerHTML = '';
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            monthYearElement.textContent = `${date.toLocaleString('default', { month: 'long' })} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Add day headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const dayDiv = document.createElement('div');
+                dayDiv.classList.add('header');
+                dayDiv.textContent = day;
+                calendarElement.appendChild(dayDiv);
+            });
+
+            // Add empty cells
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDiv = document.createElement('div');
+                calendarElement.appendChild(emptyDiv);
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                const dateStr = `${month + 1}-${day}`;
+                dayDiv.textContent = day;
+
+                const fullDate = new Date(year, month, day);
+                if (fullDate.toDateString() === new Date().toDateString()) {
+                    dayDiv.classList.add('today');
+                }
+
+                if (fullDate.getDay() === 0) dayDiv.classList.add('sunday');
+                if (isSecondOrFourthSaturday(fullDate)) dayDiv.classList.add('special-day');
+
+                holidays.forEach(holiday => {
+                    if (holiday.date === dateStr) {
+                        dayDiv.classList.add('holiday');
+                        dayDiv.addEventListener('click', () => {
+                            holidayTitle.textContent = "Holiday";
+                            holidayDescription.textContent = holiday.description;
+                            holidayModal.style.display = 'block';
+                        });
+                    }
+                });
+
+                calendarElement.appendChild(dayDiv);
+            }
+        }
+
+        prevMonthButton.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar(currentDate);
+        });
+
+        nextMonthButton.addEventListener('click', () => {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar(currentDate);
+        });
+
+        modalClose.addEventListener('click', () => holidayModal.style.display = 'none');
+
+        renderCalendar(currentDate);
+
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const userContainer = document.getElementById("userDetails");
+
+            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+
+            if (!loggedInUser) {
+                alert("No user is logged in. Redirecting to login page...");
+                window.location.href = "login.html";
+                return;
+            }
+
+            userContainer.innerHTML = `
+        <div class="card" style="width: 100%; text-align: left;display: flex;justify-content: space-around;gap: 2rem">
+
+            <div>
+            <h1 class="text-center">Welcome ${loggedInUser.name}</h1>
+            <img src="${loggedInUser.photo}" class="card-img-top" alt="User Photo">
+            </div>
+           
+            <div class="card-body">
+                <p>Username : ${loggedInUser.name}</p>
+                <p>Date of Birth : ${loggedInUser.dob}</p>
+                <p>Mobile : ${loggedInUser.mobile}</p>
+                <p>Email : ${loggedInUser.email}</p>
+                <p>Role : ${loggedInUser.role}</p>
+
+            </div>
+        </div>
+    `;
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem("loggedInUser");
+            window.location.href = "index.html";
+        });
+
+
+    </script>
+</body>
+
+<!-- <h1 style="display: flex;justify-content: space-evenly;gap: 50px;"></h1> -->
+
+</html>

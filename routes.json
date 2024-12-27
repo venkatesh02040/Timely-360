@@ -1,0 +1,8 @@
+{
+    "/users": "/users",
+    "/leaves": "/leaves",
+    "/holidays": "/holidays",
+    "/users/:id": "/users/:id",
+    "/leaves/:id": "/leaves/:id",
+    "/holidays/:id": "/holidays/:id"
+}
