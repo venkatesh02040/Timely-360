@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Check if user exists in db.json
-        fetch("http://localhost:3000/users")
+        fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json")
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch users.");
