@@ -83,50 +83,74 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateCalendar(currentDate);
 
-    // Register Form Validation and POST to db.json
-    const registerForm = document.getElementById("registerForm");
+    // Handle register
+
     registerForm.addEventListener("submit", (e) => {
         e.preventDefault();
-
+    
         const name = document.getElementById("registerName").value;
         const email = document.getElementById("registerEmail").value;
         const mobile = document.getElementById("registerMobile").value;
         const password = document.getElementById("registerPassword").value;
         const role = document.getElementById("registerRole").value;
         const dob = document.getElementById("registerDob").value;
-
-        if (!name || !email || !password || !role || !dob) {
+        const photoInput = document.getElementById("registerPhoto");
+    
+        if (!name || !email || !password || !role || !dob || !photoInput.files.length) {
             alert("Please fill out all fields.");
             return;
         }
-
-        // User data object
-        const userData = { name, email, mobile, password, role, dob };
-
-        // Post user data to db.json
-        fetch("http://localhost:3000/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to register user.");
-                }
-                return response.json();
+    
+        const photoFile = photoInput.files[0];
+        const reader = new FileReader();
+    
+        // Handle the photo file after it's read
+        reader.onload = function (event) {
+            const photoBase64 = event.target.result;
+    
+            // User data object
+            const userData = { name, email, mobile, password, role, dob, photo: photoBase64 };
+    
+            // Post user data to db.json
+            fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userData)
             })
-            .then(() => {
-                alert("Registration successful!");
-                registerForm.reset();
-            })
-            .catch(error => {
-                alert("Error registering user. Please try again.");
-                console.error(error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to register user.");
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    alert("Registration successful!");
+    
+                    // Toggle to the login form
+                    const registerForm = document.getElementById("registerForm");
+                    const loginForm = document.getElementById("loginForm");
+    
+                    // Hide the registration form and show the login form
+                    registerForm.style.display = "none";
+                    loginForm.style.display = "block";
+    
+                    registerForm.reset();
+                })
+                .catch(error => {
+                    alert("Error registering user. Please try again.");
+                    console.error(error);
+                });
+        };
+    
+        // Read the uploaded photo as Base64
+        reader.readAsDataURL(photoFile);
     });
+    
 
+
+    // Handle Login
     loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -139,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Check if user exists in db.json
+        // Check if the user exists in db.json
         fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json")
             .then(response => {
                 if (!response.ok) {
@@ -148,32 +172,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(users => {
-                console.log(users);  
-                
-                // Log the users to check the data
+                console.log(users);
+
+                // Find the user by email and role
                 const user = users.find(u => u.email === email && u.role === role);
 
-                // let fd = users.filter(i => { return i.email == email })
-                // let user = fd[0]
-
-
                 if (!user) {
-                    console.log("No user found with the given email and role");
                     alert("Invalid credentials. Please try again.");
                     return;
                 }
 
-                if (user.password != password) {
-                    console.log("Password doesn't match");
-                    alert("Invalid credentials. Please try again.");
-                    return;
+                // Check if the password matches
+                if (user.password !== password) {
+                    // If it's a temporary password (mobile number), allow login even if it's not the stored password
+                    if (user.mobile === password) {
+                        alert("Login successful with temporary password!");
+                    } else {
+                        alert("Invalid credentials. Please try again.");
+                        return;
+                    }
+                } else {
+                    alert("Login successful!");
                 }
 
-                alert("login success")
+                // Remove password from user data before storing it in localStorage
+                delete user.password;
 
-
-                delete user.password
-                // // Store user details in localStorage (excluding password)
+                // Store user details in localStorage (excluding password)
                 localStorage.setItem("loggedInUser", JSON.stringify(user));
 
                 // Welcome message
@@ -188,10 +213,69 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 alert("Error logging in. Please try again.");
-                console.error(error);
+                console.error("Error:", error);
             });
     });
 
 
+    // Handle Forgot Password
+    const forgotPassword = document.getElementById("forgotPassword");
+    const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+
+    forgotPassword.addEventListener("click", () => {
+        const forgotPasswordModal = new bootstrap.Modal(document.getElementById("forgotPasswordModal"));
+        forgotPasswordModal.show();
+    });
+
+    forgotPasswordForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById("forgotName").value.trim().toLowerCase();
+        const dob = document.getElementById("forgotDob").value;
+
+        if (!name || !dob) {
+            alert("Please fill out all fields.");
+            return;
+        }
+
+        try {
+            const response = await fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json");
+            if (!response.ok) {
+                throw new Error("Failed to fetch users.");
+            }
+
+            const users = await response.json();
+            console.log("Users fetched:", users);
+
+            // Find the user by name and date of birth
+            const user = users.find(u => u.name.toLowerCase() === name && u.dob === dob);
+
+            if (!user) {
+                alert("No user found with the given details.");
+                return;
+            }
+
+            // Temporary password is the user's mobile number
+            const tempPassword = user.mobile; // Assuming the mobile number is stored in 'mobile'
+
+            alert(`Your temporary password is set for login`);
+
+            // Autofill the login form with the user's email and mobile number as the temporary password
+            document.getElementById("loginEmail").value = user.email;
+            document.getElementById("loginPassword").value = tempPassword;
+
+            // Hide the forgot password modal
+            const forgotPasswordModal = bootstrap.Modal.getInstance(document.getElementById("forgotPasswordModal"));
+            forgotPasswordModal.hide();
+        } catch (error) {
+            alert("Error processing request. Please try again.");
+            console.error("Error:", error);
+        }
+    });
+
+
+
 
 });
+
+
