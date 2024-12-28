@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     registerForm.addEventListener("submit", (e) => {
         e.preventDefault();
-    
+
         const name = document.getElementById("registerName").value;
         const email = document.getElementById("registerEmail").value;
         const mobile = document.getElementById("registerMobile").value;
@@ -95,22 +95,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const role = document.getElementById("registerRole").value;
         const dob = document.getElementById("registerDob").value;
         const photoInput = document.getElementById("registerPhoto");
-    
+
         if (!name || !email || !password || !role || !dob || !photoInput.files.length) {
             alert("Please fill out all fields.");
             return;
         }
-    
+
         const photoFile = photoInput.files[0];
         const reader = new FileReader();
-    
+
         // Handle the photo file after it's read
         reader.onload = function (event) {
             const photoBase64 = event.target.result;
-    
+
             // User data object
             const userData = { name, email, mobile, password, role, dob, photo: photoBase64 };
-    
+
             // Post user data to db.json
             fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json", {
                 method: "POST",
@@ -127,15 +127,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                 .then(() => {
                     alert("Registration successful!");
-    
+
                     // Toggle to the login form
                     const registerForm = document.getElementById("registerForm");
                     const loginForm = document.getElementById("loginForm");
-    
+
                     // Hide the registration form and show the login form
                     registerForm.style.display = "none";
                     loginForm.style.display = "block";
-    
+
                     registerForm.reset();
                 })
                 .catch(error => {
@@ -143,11 +143,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error(error);
                 });
         };
-    
+
         // Read the uploaded photo as Base64
         reader.readAsDataURL(photoFile);
     });
-    
+
 
 
     // Handle Login
@@ -163,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Check if the user exists in db.json
         fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json")
             .then(response => {
                 if (!response.ok) {
@@ -171,8 +170,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 return response.json();
             })
-            .then(users => {
-                console.log(users);
+            .then(data => {
+                console.log("Fetched data:", data);
+
+                // Access the users array from the data object
+                const users = data.users;
+
+                // Ensure users is an array
+                if (!Array.isArray(users)) {
+                    throw new Error("Users data is not an array.");
+                }
 
                 // Find the user by email and role
                 const user = users.find(u => u.email === email && u.role === role);
@@ -212,8 +219,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .catch(error => {
-                alert("Error logging in. Please try again.");
                 console.error("Error:", error);
+                alert("Error logging in. Please try again.");
             });
     });
 
