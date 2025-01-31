@@ -242,28 +242,7 @@ fetchHolidays();
 
 
 // Handle the "Select Leave Date" button click
-let selectedLeaveDate = null;
 
-document.getElementById("select-leave-date-btn").addEventListener("click", (event) => {
-  event.preventDefault(); // Prevent default button behavior
-
-  const dateInput = document.getElementById("leave-date-picker");
-
-  // Temporarily show the date picker
-  dateInput.style.visibility = "visible";
-  dateInput.style.position = "static";
-
-  // Programmatically focus the date picker
-  dateInput.focus();
-
-  // Hide date picker on blur
-  dateInput.addEventListener("blur", () => {
-    dateInput.style.visibility = "hidden";
-    dateInput.style.position = "absolute";
-  }, { once: true });
-});
-
-// Handle date selection
 // Restrict date picker to prevent selecting past dates
 document.addEventListener("DOMContentLoaded", function () {
   const dateInput = document.getElementById("leave-date-picker");
@@ -323,7 +302,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("leave-form").reset();
         document.getElementById("selected-leave-date").textContent = "Leave Date: None";
         selectedLeaveDate = null;
-        (data)
+
+        // **Automatically refresh leave status after submission**
+        displayLeaveRequestStatus();
       })
       .catch(error => {
         console.error("Error submitting leave request:", error);
@@ -350,12 +331,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
-
 // Function to display leave request status
 function displayLeaveRequestStatus() {
-
-  // Retrieve the logged-in user object from localStorage
   const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
   if (!loggedInUser || !loggedInUser.name) {
@@ -371,7 +348,6 @@ function displayLeaveRequestStatus() {
 
     const { name: fullName, id: userId } = user;
 
-    // Fetch leave requests from the server
     fetch("https://timely-360.onrender.com/leaveRequests")
       .then(response => {
         if (!response.ok) {
@@ -380,9 +356,6 @@ function displayLeaveRequestStatus() {
         return response.json();
       })
       .then(data => {
-        (data);
-
-        // Filter leave requests for the logged-in user
         const userLeaves = data.filter(req => req.username === fullName);
 
         const leaveStatusBody = document.querySelector("#leave-status-body");
@@ -417,7 +390,8 @@ function displayLeaveRequestStatus() {
   });
 }
 
-displayLeaveRequestStatus()
+// **Ensure the leave status is loaded on page load**
+displayLeaveRequestStatus();
 
 //logoutButton
 
