@@ -413,14 +413,22 @@ function attachEventListeners() {
     deleteButtons.forEach((button) => {
         button.addEventListener("click", () => {
             const holidayId = button.getAttribute("data-id");
-            deleteHoliday(holidayId);
+            confirmDeleteHoliday(holidayId);
         });
     });
 }
 
+// Function to confirm before deleting holiday
+function confirmDeleteHoliday(id) {
+    if (confirm("Are you sure you want to delete this holiday?")) {
+        deleteHoliday(id);
+    }
+}
+
 // Add Holiday Form Submission
 function openAddHolidayForm() {
-    const modal = new bootstrap.Modal(document.getElementById("addHolidayModal"));
+    const modalElement = document.getElementById("addHolidayModal");
+    const modal = new bootstrap.Modal(modalElement);
     modal.show();
 
     const form = document.getElementById("addHolidayForm");
@@ -436,8 +444,8 @@ function openAddHolidayForm() {
             type: document.getElementById("addHolidayType").value, // Get selected holiday type
         };
 
-        if (!holiday.type) {
-            alert("Please select a holiday type.");
+        if (!holiday.date || !holiday.name || !holiday.description || !holiday.type) {
+            alert("All fields are required. Please fill in all details.");
             return;
         }
 
@@ -464,6 +472,8 @@ function openAddHolidayForm() {
             });
     };
 }
+
+openAddHolidayForm()
 
 // Open the Edit Holiday Modal
 function openEditHolidayForm(id) {
@@ -494,8 +504,8 @@ function openEditHolidayForm(id) {
                     type: document.getElementById("editHolidayType").value, // Get selected type
                 };
 
-                if (!updatedHoliday.type) {
-                    alert("Please select a holiday type.");
+                if (!updatedHoliday.date || !updatedHoliday.name || !updatedHoliday.description || !updatedHoliday.type) {
+                    alert("All fields are required. Please fill in all details.");
                     return;
                 }
 
@@ -527,7 +537,6 @@ function openEditHolidayForm(id) {
         });
 }
 
-
 // Delete holiday
 function deleteHoliday(id) {
     if (!id) {
@@ -542,6 +551,7 @@ function deleteHoliday(id) {
             if (!response.ok) {
                 throw new Error("Failed to delete holiday");
             }
+            alert("Holiday deleted successfully!");
             fetchHolidays(); // Refresh the holiday list
         })
         .catch((error) => {
@@ -558,6 +568,3 @@ document.getElementById('logoutButton').addEventListener('click', () => {
     localStorage.removeItem("loggedInUser");
     window.location.href = "index.html";
 });
-
-
-
