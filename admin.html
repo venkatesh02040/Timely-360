@@ -9,16 +9,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <!-- Link Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="astyles.css">
 </head>
 
 <body>
-    <div class="container mt-4">
-        <h2>Admin Dashboard</h2>
+    <div class="container mt-0" id="bd">
+        <header>
+            <img src="vyl.jpeg" alt="Company Logo">
+            <h1 id="fh">Admin Dashboard</h1>
+            <button id="logoutButton" style="margin-left: auto;">Logout</button>
+        </header>
         <!-- Navigation -->
         <nav>
             <ul class="nav">
                 <li class="nav-item">
                     <a class="nav-link" href="#employeeManagement">Employee Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#ManageAttendance">Manage Attendance</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#leaveRequests">Leave Requests</a>
@@ -29,60 +37,143 @@
             </ul>
         </nav>
 
-        <!-- Employee Management Section -->
-        <section id="employeeManagement" class="mt-4">
+         <!-- Employee Management Section -->
+         <section id="employeeManagement" class="mt-4">
             <h4>Manage Employees</h4>
-            <button class="btn btn-primary" onclick="openAddEmployeeForm()">Add New Employee</button>
-            <table class="table mt-3" id="employeeTable">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="employeeList">
-                    <!-- Employee data will be populated here -->
-                </tbody>
-            </table>
+            
+            <!-- Employee Search Bar with Add Employee Button -->
+            <div class="input-group mb-3">
+                <input type="text" id="employeeSearch" class="form-control" placeholder="Search Employees..." onkeyup="searchEmployees()">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Employee</button>
+            </div>
+
+            <!-- Employee Table -->
+            <div id="employeeTableContainer"></div>
         </section>
 
-        <!-- Add Employee Modal -->
-        <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addEmployeeModalLabel">Add New Employee</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="addEmployeeForm">
-                            <div class="mb-3">
-                                <label for="employeeName" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="employeeName"
-                                    placeholder="Enter employee name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="employeeEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="employeeEmail"
-                                    placeholder="Enter employee email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="employeeRole" class="form-label">Role</label>
-                                <select class="form-select" id="employeeRole" required>
-                                    <option value="" disabled selected>Select role</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Employee">Employee</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Add Employee</button>
-                        </form>
+        <div class="container mt-4">
+
+            <!-- Add Employee Modal -->
+            <div class="modal fade" id="addEmployeeModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addEmployeeModalLabel">Add Employee</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addEmployeeForm">
+                                <div class="mb-3">
+                                    <label for="addEmployeeName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="addEmployeeName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addEmployeeEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="addEmployeeEmail" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addEmployeeMobile" class="form-label">Mobile</label>
+                                    <input type="text" class="form-control" id="addEmployeeMobile" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addEmployeePassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="addEmployeePassword"
+                                        placeholder="Enter your password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addEmployeeRole" class="form-label">Role</label>
+                                    <select class="form-control" id="addEmployeeRole" required>
+                                        <option value="employee">Employee</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addEmployeeDob" class="form-label">Date of Birth</label>
+                                    <input type="date" class="form-control" id="addEmployeeDob" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addEmployeePhoto" class="form-label">Upload Photo</label>
+                                    <input type="file" class="form-control" id="addEmployeePhoto" accept="image/*"
+                                        required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Employee</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
+
+        <!-- Edit Employee Modal -->
+        <div class="modal fade" id="editEmployeeModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editEmployeeModalLabel">Edit Employee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                    </div>
+                    <form id="editEmployeeForm">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="editEmployeeName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="editEmployeeName"
+                                    placeholder="Enter employee name" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployeeEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmployeeEmail"
+                                    placeholder="Enter employee email" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployeeRole" class="form-label">Role</label>
+                                <input type="text" class="form-control" id="editEmployeeRole"
+                                    placeholder="Enter employee role" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployeeMobile" class="form-label">Mobile</label>
+                                <input type="text" class="form-control" id="editEmployeeMobile"
+                                    placeholder="Enter employee mobile number" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployeePassword" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="editEmployeePassword"
+                                    placeholder="Enter your password" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployeeDob" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="editEmployeeDob" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEmployeePhoto" class="form-label">Upload Photo</label>
+                                <input type="file" class="form-control" id="editEmployeePhoto" accept="image/*"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+         <!-- Employee Attendance Section -->
+         <section id="ManageAttendance" class="mt-4">
+            <h4>Manage Attendance</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Date and Time</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                    <!-- Attendance data will be populated here -->
+                </tbody>
+            </table>
+        </section>
 
         <!-- Leave Requests Section -->
         <section id="leaveRequests" class="mt-4">
@@ -97,7 +188,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="leaveList">
+                <tbody id="leaveTableBody">
                     <!-- Leave requests will be populated here -->
                 </tbody>
             </table>
@@ -106,11 +197,17 @@
         <!-- Working Days & Holidays Section -->
         <section id="workingDays" class="mt-4">
             <h4>Manage Working Days & Holidays</h4>
-            <button class="btn btn-primary mb-3" onclick="openAddHolidayForm()">Add Holiday</button>
+
+            <!-- Holiday Search Bar with Add Holiday Button -->
+            <div class="input-group mb-3">
+                <input type="text" id="holidaySearch" class="form-control" placeholder="Search Holidays..." onkeyup="searchHolidays()">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHolidayModal">Add Holiday</button>
+            </div>
             <table class="table">
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Name</th>
                         <th>Description</th>
                         <th>Actions</th>
                     </tr>
@@ -120,170 +217,90 @@
                 </tbody>
             </table>
         </section>
+
+        <!-- Add Holiday Modal -->
+        <div class="modal fade" id="addHolidayModal" tabindex="-1" >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="addHolidayForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addHolidayModalLabel">Add Holiday</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="addHolidayDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="addHolidayDate" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="addHolidayName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="addHolidayName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="addHolidayType" class="form-label">holiday Type</label>
+                                <select class="form-select"  id="addHolidayType" required>
+                                    <option value="">Select type</option>
+                                    <option value="public">Public</option>
+                                    <option value="festival">Festival</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="addHolidayDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="addHolidayDescription" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Holiday</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Holiday Modal -->
+        <div class="modal fade" id="editHolidayModal" tabindex="-1" aria-labelledby="editHolidayModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="editHolidayForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editHolidayModalLabel">Edit Holiday</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="editHolidayDate" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="editHolidayDate" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editHolidayName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="editHolidayName" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="editHolidayType" class="form-label">holiday Type</label>
+                                <select class="form-select"  id="editHolidayType" required>
+                                    <option value="">Select type</option>
+                                    <option value="public">Public</option>
+                                    <option value="festival">Festival</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editHolidayDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="editHolidayDescription" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update Holiday</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
-
-    <!-- Add JavaScript File -->
     <script src="admin.js"></script>
-    <!-- Debugging Helper -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add Employee Form Submission
-            document.getElementById('addEmployeeForm').addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                // Get form values
-                const name = document.getElementById('employeeName').value.trim();
-                const email = document.getElementById('employeeEmail').value.trim();
-                const role = document.getElementById('employeeRole').value;
-
-                // Validate input
-                if (!name || !email || !role) {
-                    alert('Please fill in all fields.');
-                    return;
-                }
-
-                // Create employee object
-                const newEmployee = {
-                    name: name,
-                    email: email,
-                    role: role
-                };
-
-                // Send data to the backend (JSON Server)
-                fetch('http://localhost:3000/users', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newEmployee)
-                })
-                    .then(response => response.json())
-                    .then(() => {
-                        // Refresh the employee table
-                        fetchEmployees();
-
-                        // Close the modal
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('addEmployeeModal'));
-                        modal.hide();
-
-                        // Reset the form
-                        document.getElementById('addEmployeeForm').reset();
-
-                        alert('Employee added successfully!');
-                    })
-                    .catch(error => {
-                        console.error('Error adding employee:', error);
-                        alert('Failed to add employee. Please try again.');
-                    });
-            });
-
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchEmployees();
-            fetchLeaveRequests();
-        });
-
-        // Fetch employee data
-        function fetchEmployees() {
-            fetch('http://localhost:3000/users')
-                .then(response => response.json())
-                .then(users => {
-                    let employeeTable = document.getElementById('employeeList');
-                    employeeTable.innerHTML = '';
-
-                    users.forEach(user => {
-                        let row = `<tr>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${user.role}</td>
-                    <td>
-                        <button class="btn btn-warning" onclick="editEmployee(${user.id})">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteEmployee(${user.id})">Delete</button>
-                    </td>
-                </tr>`;
-                        employeeTable.innerHTML += row;
-                    });
-                });
-        }
-
-        // Fetch leave requests
-        function fetchLeaveRequests() {
-            fetch('http://localhost:3000/leaves')
-                .then(response => response.json())
-                .then(leaves => {
-                    let leaveTable = document.getElementById('leaveList');
-                    leaveTable.innerHTML = '';
-
-                    leaves.forEach(leave => {
-                        let row = `<tr>
-                    <td>${leave.userId}</td>
-                    <td>${leave.type}</td>
-                    <td>${leave.status}</td>
-                    <td>
-                        <button class="btn btn-success" onclick="approveLeave(${leave.id})">Approve</button>
-                        <button class="btn btn-danger" onclick="rejectLeave(${leave.id})">Reject</button>
-                    </td>
-                </tr>`;
-                        leaveTable.innerHTML += row;
-                    });
-                });
-        }
-
-        // Approve leave
-        function approveLeave(id) {
-            fetch(`http://localhost:3000/leaves/${id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: 'approved' }),
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(response => response.json())
-                .then(() => fetchLeaveRequests());
-        }
-
-        // Reject leave
-        function rejectLeave(id) {
-            fetch(`http://localhost:3000/leaves/${id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status: 'rejected' }),
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(response => response.json())
-                .then(() => fetchLeaveRequests());
-        }
-
-        // Edit employee
-        function editEmployee(id) {
-            fetch(`http://localhost:3000/users/${id}`)
-                .then(response => response.json())
-                .then(user => {
-                    // Logic to populate an edit form (to be implemented)
-                    console.log('Editing user:', user);
-                });
-        }
-
-        // Delete employee
-        function deleteEmployee(id) {
-            fetch(`http://localhost:3000/users/${id}`, {
-                method: 'DELETE'
-            })
-                .then(() => fetchEmployees());
-        }
-
-        // Add new employee (Placeholder function)
-        function openAddEmployeeForm() {
-            // Function to open the Add Employee Modal
-            function openAddEmployeeForm() {
-                const modal = new bootstrap.Modal(document.getElementById('addEmployeeModal'));
-                modal.show();
-            }
-        }
-
-
-
-
-
-    </script>
 </body>
 
 </html>
