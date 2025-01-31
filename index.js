@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Calendar logic
     const currentDate = dayjs();
     let selectedDate = currentDate;
 
@@ -7,13 +8,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextButton = document.getElementById("nextMonth");
     const calendarDays = document.getElementById("calendarDays");
 
-    // Mock Data: Holidays
-    const holidays = [
-        { date: "2024-01-01", type: "public", name: "New Year's Day", description: "Celebration of the New Year." },
-        { date: "2024-01-26", type: "public", name: "Republic Day", description: "Commemoration of the Indian Republic." },
-        { date: "2024-10-31", type: "festival", name: "Diwali", description: "Festival of Lights celebrated across India." },
-        { date: "2025-01-01", type: "public", name: "New Year's Day", description: "Celebration of the New Year." }
-    ];
+    let holidays = []; // Store fetched holidays
+
+    // Fetch holidays from JSON Server
+    function fetchHolidays() {
+        fetch("https://timely-360.onrender.com/holidays")
+            .then(response => response.json())
+            .then(data => {
+                holidays = data; // Store holidays in the variable
+                updateCalendar(selectedDate); // Refresh calendar with holidays
+            })
+            .catch(error => console.error("Error fetching holidays:", error));
+    }
 
     // Update Calendar
     function updateCalendar(date) {
@@ -45,15 +51,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (holiday) {
                 dayCell.classList.add(holiday.type === "public" ? "bg-success" : "bg-info");
                 dayCell.setAttribute("title", `${holiday.name}: ${holiday.description}`);
-                dayCell.addEventListener("click", () => {
-                    const holidayDetails = document.getElementById("holidayDetails");
-                    holidayDetails.textContent = `${holiday.name}: ${holiday.description}`;
-                    const myModal = new bootstrap.Modal(document.getElementById('holidayModal'));
-                    myModal.show();
-                });
+                dayCell.addEventListener("click", () => showHolidayModal(holiday));
             }
 
-            if (date.date(day).isSame(currentDate, 'day')) {
+            if (date.date(day).isSame(currentDate, "day")) {
                 dayCell.classList.add("current-day");
             }
 
@@ -71,6 +72,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Show holiday details in a modal
+    function showHolidayModal(holiday) {
+        document.getElementById("holidayTitle").textContent = holiday.name;
+        document.getElementById("holidayDescription").textContent = holiday.description;
+
+        const myModal = new bootstrap.Modal(document.getElementById("holidayModal"));
+        myModal.show();
+    }
+
+    // Event listeners for navigation buttons
     prevButton.addEventListener("click", () => {
         selectedDate = selectedDate.subtract(1, "month");
         updateCalendar(selectedDate);
@@ -81,7 +92,8 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCalendar(selectedDate);
     });
 
-    updateCalendar(currentDate);
+    // Fetch holidays and initialize calendar
+    fetchHolidays();
 
     // Handle register
 
@@ -112,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const userData = { name, email, mobile, password, role, dob, photo: photoBase64 };
 
             // Post user data to db.json
-            fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json", {
+            fetch("https://timely-360.onrender.com/users", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -128,26 +140,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(() => {
                     alert("Registration successful!");
 
-                    // Toggle to the login form
+                    // Clear the registration form
                     const registerForm = document.getElementById("registerForm");
-                    const loginForm = document.getElementById("loginForm");
-
-                    // Hide the registration form and show the login form
-                    registerForm.style.display = "none";
-                    loginForm.style.display = "block";
-
                     registerForm.reset();
                 })
                 .catch(error => {
                     alert("Error registering user. Please try again.");
                     console.error(error);
                 });
+
         };
 
         // Read the uploaded photo as Base64
         reader.readAsDataURL(photoFile);
     });
-
 
 
     // Handle Login
@@ -163,23 +169,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json")
+        // Check if the user exists in db.json
+        fetch("https://timely-360.onrender.com/users")
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch users.");
                 }
                 return response.json();
             })
-            .then(data => {
-                console.log("Fetched data:", data);
-
-                // Access the users array from the data object
-                const users = data.users;
-
-                // Ensure users is an array
-                if (!Array.isArray(users)) {
-                    throw new Error("Users data is not an array.");
-                }
+            .then(users => {
+                (users);
 
                 // Find the user by email and role
                 const user = users.find(u => u.email === email && u.role === role);
@@ -219,8 +218,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
                 alert("Error logging in. Please try again.");
+                console.error("Error:", error);
             });
     });
 
@@ -246,13 +245,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const response = await fetch("https://raw.githubusercontent.com/venkatesh02040/timely-json/refs/heads/main/timely-data.json");
+            const response = await fetch("https://timely-360.onrender.com/users");
             if (!response.ok) {
                 throw new Error("Failed to fetch users.");
             }
 
             const users = await response.json();
-            console.log("Users fetched:", users);
 
             // Find the user by name and date of birth
             const user = users.find(u => u.name.toLowerCase() === name && u.dob === dob);
@@ -284,5 +282,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 });
+
+
 
 
