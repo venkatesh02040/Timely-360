@@ -10,8 +10,8 @@
     <!-- Link Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="astyles.css">
-    <link rel="icon" href="./vyl.jpeg">
-
+    <link rel="icon" href="vyl.jpeg">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body>
@@ -23,30 +23,37 @@
         </header>
         <!-- Navigation -->
         <nav>
+            <h2> <img src="vyl.jpeg" alt="Company Logo" style="width: 50px;height: 50px;border-radius: 50%;" ><span> </span>TIMELY 360</h2>
             <ul class="nav">
-                <li class="nav-item">
+                <li style="display: flex;" class="nav-item">
+                    <a style="margin-top: 12px;padding: 2px; font-size: 16px;text-decoration: none;" class='bx bx-laptop' href="#employeeManagement"></a>
                     <a class="nav-link" href="#employeeManagement">Employee Management</a>
                 </li>
-                <li class="nav-item">
+                <li style="display: flex;" class="nav-item">
+                    <a style="margin-top: 12px;padding: 2px; font-size: 16px;text-decoration: none;" class='bx bx-edit-alt' href="#ManageAttendance"></a>
                     <a class="nav-link" href="#ManageAttendance">Manage Attendance</a>
                 </li>
-                <li class="nav-item">
+                <li style="display: flex;" class="nav-item">
+                    <a style="margin-top: 12px;padding: 2px; font-size: 16px;text-decoration: none;" class='bx bx-envelope' href="#leaveRequests"></a>
                     <a class="nav-link" href="#leaveRequests">Leave Requests</a>
                 </li>
-                <li class="nav-item">
+                <li style="display: flex;" class="nav-item">
+                    <a style="margin-top: 12px;padding: 2px; font-size: 16px;text-decoration: none;" class='bx bx-briefcase' href="#workingDays"></a>
                     <a class="nav-link" href="#workingDays">Working Days & Holidays</a>
                 </li>
             </ul>
         </nav>
 
-         <!-- Employee Management Section -->
-         <section id="employeeManagement" class="mt-4">
+        <!-- Employee Management Section -->
+        <section id="employeeManagement" class="mt-4">
             <h4>Manage Employees</h4>
-            
+
             <!-- Employee Search Bar with Add Employee Button -->
             <div class="input-group mb-3">
-                <input type="text" id="employeeSearch" class="form-control" placeholder="Search Employees..." onkeyup="searchEmployees()">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add Employee</button>
+                <input type="text" id="employeeSearch" class="form-control" placeholder="Search Employees..."
+                    onkeyup="searchEmployees()">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">Add
+                    Employee</button>
             </div>
 
             <!-- Employee Table -->
@@ -61,7 +68,8 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="addEmployeeModalLabel">Add Employee</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close">X</button>
                         </div>
                         <div class="modal-body">
                             <form id="addEmployeeForm">
@@ -161,8 +169,8 @@
             </div>
         </div>
 
-         <!-- Employee Attendance Section -->
-         <section id="ManageAttendance" class="mt-4">
+        <!-- Employee Attendance Section -->
+        <section id="ManageAttendance" class="mt-4">
             <h4>Manage Attendance</h4>
             <table class="table">
                 <thead>
@@ -202,8 +210,10 @@
 
             <!-- Holiday Search Bar with Add Holiday Button -->
             <div class="input-group mb-3">
-                <input type="text" id="holidaySearch" class="form-control" placeholder="Search Holidays..." onkeyup="searchHolidays()">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addHolidayModal">Add Holiday</button>
+                <input type="text" id="holidaySearch" class="form-control" placeholder="Search Holidays..."
+                    onkeyup="searchHolidays()">
+                <button id="addHolidayButton" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#addHolidayModal">Add Holiday</button>
             </div>
             <table class="table">
                 <thead>
@@ -221,13 +231,14 @@
         </section>
 
         <!-- Add Holiday Modal -->
-        <div class="modal fade" id="addHolidayModal" tabindex="-1" >
+        <div class="modal fade" id="addHolidayModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form id="addHolidayForm">
                         <div class="modal-header">
                             <h5 class="modal-title" id="addHolidayModalLabel">Add Holiday</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close">X</button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
@@ -240,7 +251,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="addHolidayType" class="form-label">holiday Type</label>
-                                <select class="form-select"  id="addHolidayType" required>
+                                <select class="form-select" id="addHolidayType" required>
                                     <option value="">Select type</option>
                                     <option value="public">Public</option>
                                     <option value="festival">Festival</option>
@@ -268,7 +279,8 @@
                     <form id="editHolidayForm">
                         <div class="modal-header">
                             <h5 class="modal-title" id="editHolidayModalLabel">Edit Holiday</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">X</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close">X</button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
@@ -281,7 +293,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="editHolidayType" class="form-label">holiday Type</label>
-                                <select class="form-select"  id="editHolidayType" required>
+                                <select class="form-select" id="editHolidayType" required>
                                     <option value="">Select type</option>
                                     <option value="public">Public</option>
                                     <option value="festival">Festival</option>
