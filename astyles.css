@@ -90,6 +90,7 @@ nav .nav-link {
 
 nav .nav-link:hover {
     background: rgba(17, 0, 0, 0.041);
+    color: #1095ca !important;
 }
 
 .container {
@@ -165,6 +166,9 @@ header img {
 @media screen and (max-width: 991px) {
     nav {
         width: 200px;
+    }
+    nav h2{
+        display: none;
     }
 
     .container {
