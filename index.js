@@ -283,6 +283,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+// Guest Login management
+
+document.addEventListener("DOMContentLoaded", function () {
+    const adminDashboardUrl = "admin.html";
+    const employeeDashboardUrl = "employee.html"
+
+    // Guest Login for Admin (Direct Redirection)
+    document.getElementById("guestAdminBtn").addEventListener("click", function () {
+        alert("Logging in as Admin...");
+        window.location.href = adminDashboardUrl;
+    });
+
+    document.getElementById("guestEmployeeBtn").addEventListener("click", function () {
+
+        // Check if the user exists in db.json
+        fetch("https://timely-360.onrender.com/users")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch users.");
+                }
+                return response.json();
+            })
+            .then(users => {
+                (users);
+
+                // Find the user by email and role
+                const user = users.find(u => u.email === "guest@gmail.com");
+
+                if (!user) {
+                    alert("Error in logging .Please try again.");
+                    return;
+                }
+
+                // Store user details in localStorage (excluding password)
+                localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+                // Welcome message
+                alert(`Welcome, ${user.name}!`);
+                window.location.href = employeeDashboardUrl;
+            })
+            .catch(error => {
+                alert("Error logging in. Please try again.");
+                console.error("Error:", error);
+            });
 
 
 
+
+        // alert("Logging in as Guest Employee...");
+    });
+
+
+});
