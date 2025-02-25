@@ -14,7 +14,7 @@
     color: #ffffff !important;
     box-shadow: 5px 4px 3px #1095ca !important;
     border-radius: 3px !important;
-    border: 2px solid rgba(14, 4, 4);
+    border: 2px solid rgba(14, 4, 4)!important;
 }
 
 .btn-close {
@@ -22,7 +22,7 @@
     color: #ffffff !important;
     box-shadow: 5px 4px 3px #1095ca !important;
     border-radius: 3px !important;
-    border: 2px solid rgba(14, 4, 4);
+    border: 2px solid rgba(14, 4, 4)!important;
 }
 
 #holidaySearch.form-control,
@@ -283,3 +283,4 @@ header img {
         width: 100%;
     }
 }
+
