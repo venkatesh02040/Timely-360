@@ -187,9 +187,13 @@ h2 {
 #prevMonth,
 #nextMonth,
 #login-btn,
+#guestLoginBtn,
+#guestAdminBtn,
+#guestEmployeeBtn,
 #register-btn {
     background-color: var(--primary-color);
     color: #ffffff;
+    /* border-color: var(--primary-color); */
 }
 
 .tab-content {
